@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Be My Valentine 💖</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: radial-gradient(circle at top, #ffd6e0, #ff9aa2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Floating hearts in background */
+.heart {
+  position: absolute;
+  bottom: -30px;
+  animation: floatUp linear infinite;
+  opacity: 0.8;
+  font-size: 20px;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-120vh); opacity: 0; }
+}
+
+/* Envelope container */
+.envelope {
+  position: relative;
+  width: 350px;
+  height: 230px;
+  background: #ff4d6d;
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Envelope flap */
+.flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 175px solid transparent;
+  border-right: 175px solid transparent;
+  border-bottom: 115px solid #ff2d55;
+  transform-origin: top;
+  transition: transform 0.9s ease;
+  pointer-events: none;
+}
+
+.envelope.open .flap {
+  transform: rotateX(180deg);
+}
+
+/* Letter inside envelope */
+.letter {
+  position: absolute;
+  inset: 14px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(15px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  transition: all 0.8s ease;
+}
+
+.envelope.open .letter {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Text */
+h2 {
+  color: #ff2d55;
+  margin: 8px 0;
+  font-size: 22px;
+}
+
+p {
+  font-size: 15px;
+  color: #444;
+}
+
+/* Buttons container */
+.buttons {
+  margin-top: 20px;
+  position: relative;
+  height: 60px;
+}
+
+/* Buttons */
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#yesBtn {
+  background: #ff2d55;
+  color: #fff;
+}
+
+#yesBtn:hover {
+  transform: scale(1.1);
+}
+
+#noBtn {
+  background: #e0e0e0;
+  position: absolute;
+  left: 120px;
+}
+
+.message {
+  margin-top: 40px;
+  font-size: 20px;
+  color: #c9184a;
+  min-height: 18px;
+}
+
+.final {
+  margin-top: 15px;
+  font-size: 18px;
+  color: #ff2d55;
+}
+</style>
+</head>
+
+<body>
+
+<div class="envelope" id="envelope">
+  <div class="flap"></div>
+
+  <div class="letter">
+    <h2>Will you be my Valentine (again)? 💑</h2>
+    <p>You’re already married to me… so just say yes 😌</p>
+
+    <div class="buttons">
+      <button id="yesBtn">YES ❤️</button>
+      <button id="noBtn">NO 🙄</button>
+    </div>
+
+    <div class="message" id="message"></div>
+    <div class="final" id="final"></div>
+  </div>
+</div>
+
+<script>
+window.onload = function() {
+  /* Envelope open */
+  const envelope = document.getElementById("envelope");
+  let opened = false;
+
+  envelope.addEventListener("click", () => {
+    if (!opened) {
+      envelope.classList.add("open");
+      opened = true;
+    }
+  });
+
+  /* Floating hearts */
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = 16 + Math.random() * 18 + "px";
+    heart.style.animationDuration = 6 + Math.random() * 4 + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 9000);
+  }, 600);
+
+  /* NO button logic (move on click only) */
+  const noBtn = document.getElementById("noBtn");
+  const message = document.getElementById("message");
+  const finalMsg = document.getElementById("final");
+
+  const guiltTexts = [
+    "Excuse me?? 😑",
+    "You already said yes once…",
+    "We share a house, remember? 🏠",
+    "Wow. Cold. Very cold.",
+    "Sleeping on the couch tonight 😌",
+    "Just click YES and move on"
+  ];
+
+  let guiltIndex = 0;
+
+  function moveNo() {
+    noBtn.style.left = Math.random() * 220 + "px";
+    noBtn.style.top = Math.random() * 35 + "px";
+    message.textContent = guiltTexts[guiltIndex % guiltTexts.length];
+    guiltIndex++;
+  }
+
+  noBtn.addEventListener("click", moveNo);
+
+  /* YES button */
+  document.getElementById("yesBtn").addEventListener("click", () => {
+    finalMsg.textContent =
+      "I love you ❤️ Thanks for still choosing me (smart choice 😏)";
+    message.textContent = "";
+    noBtn.style.display = "none";
+  });
+};
+</script>
+
+</body>
+</html>
