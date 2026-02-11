@@ -6,6 +6,275 @@
 <title>Be My Valentine 💖</title>
 
 <style>
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: radial-gradient(circle at top, #ffd6e0, #ff9aa2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Floating hearts */
+.heart {
+  position: absolute;
+  bottom: -30px;
+  animation: floatUp linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-120vh); opacity: 0; }
+}
+
+/* Envelope */
+.envelope {
+  position: relative;
+  width: 90vw;
+  max-width: 500px;
+  aspect-ratio: 5 / 3.5;
+  background: linear-gradient(145deg, #ff6b9d, #fe5196);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  transition: transform 0.3s ease;
+}
+
+.envelope:hover {
+  transform: scale(1.02);
+}
+
+/* Flap */
+.flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: #fe3a7f;
+  clip-path: polygon(0 0, 50% 100%, 100% 0);
+  transform-origin: top center;
+  transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 3;
+}
+
+.envelope.open .flap {
+  transform: rotateX(180deg);
+}
+
+/* Letter */
+.letter {
+  position: absolute;
+  inset: 5%;
+  background: white;
+  border-radius: 15px;
+  padding: 6%;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.envelope.open .letter {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Text */
+h2 {
+  color: #ff2d55;
+  margin: 10px 0;
+  font-size: 24px;
+}
+
+p {
+  font-size: 16px;
+  color: #444;
+}
+
+/* Buttons */
+.buttons {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 30px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#yesBtn {
+  background: #ff2d55;
+  color: white;
+}
+
+#yesBtn:hover {
+  transform: scale(1.1);
+}
+
+#noBtn {
+  background: #f1f1f1;
+  position: fixed;
+  display: none;
+  z-index: 1000;
+}
+
+/* Messages */
+.message {
+  margin-top: 25px;
+  font-size: 18px;
+  color: #c9184a;
+  min-height: 24px;
+}
+
+.final {
+  margin-top: 15px;
+  font-size: 20px;
+  color: #ff2d55;
+  font-weight: bold;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+
+  h2 { font-size: 20px; }
+
+  p { font-size: 15px; }
+
+  .buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="envelope" id="envelope">
+  <div class="flap"></div>
+
+  <div class="letter">
+    <h2>Will you be my Valentine (again)? 💑</h2>
+    <p>You are already married to me… so choose wisely 😌</p>
+
+    <div class="buttons">
+      <button id="yesBtn">YES ❤️</button>
+    </div>
+
+    <div class="message" id="message"></div>
+    <div class="final" id="final"></div>
+  </div>
+</div>
+
+<button id="noBtn">NO 🙄</button>
+
+<script>
+window.onload = function() {
+
+  const envelope = document.getElementById("envelope");
+  const noBtn = document.getElementById("noBtn");
+  const message = document.getElementById("message");
+  const finalMsg = document.getElementById("final");
+  const yesBtn = document.getElementById("yesBtn");
+
+  let opened = false;
+
+  envelope.addEventListener("click", () => {
+    if (!opened) {
+      envelope.classList.add("open");
+      opened = true;
+      noBtn.style.display = "block";
+      moveNoButton();
+    }
+  });
+
+  /* Floating hearts */
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = 16 + Math.random() * 20 + "px";
+    heart.style.animationDuration = 6 + Math.random() * 4 + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 9000);
+  }, 600);
+
+  const guiltTexts = [
+    "Excuse me?? 😑",
+    "We have been married for a year, remember? 🏠",
+    "Sleeping in my room tonight 😌",
+    "Really? Choosing violence? 😤",
+    "I’m telling your mom 👀",
+    "The audacity! 😱",
+    "Why are you like this? 😩",
+    "Just click YES already! 💁‍♀️"
+  ];
+
+  let guiltIndex = 0;
+
+  function moveNoButton() {
+    const padding = 20;
+    const btnWidth = 100;
+    const btnHeight = 50;
+
+    const maxX = window.innerWidth - btnWidth - padding;
+    const maxY = window.innerHeight - btnHeight - padding;
+
+    const randomX = Math.random() * maxX;
+    const randomY = Math.random() * maxY;
+
+    noBtn.style.left = randomX + "px";
+    noBtn.style.top = randomY + "px";
+
+    message.textContent = guiltTexts[guiltIndex % guiltTexts.length];
+    guiltIndex++;
+  }
+
+  noBtn.addEventListener("click", moveNoButton);
+
+  yesBtn.addEventListener("click", () => {
+    finalMsg.textContent =
+      "I love you ❤️ Thank you for handling my moods, my cooking experiments, and my laziness (not lazier than you though 😏).";
+    message.textContent = "";
+    noBtn.style.display = "none";
+  });
+
+};
+</script>
+
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Be My Valentine 💖</title>
+
+<style>
 * {
   margin: 0;
   padding: 0;
@@ -1223,4 +1492,5 @@ window.onload = function() {
 </html>
 
 
+ -->
  -->
